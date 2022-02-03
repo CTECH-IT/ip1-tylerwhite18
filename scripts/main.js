@@ -19,11 +19,17 @@ let bulletCount = 0;
 let bulletSpeed = 2;
 let bulletRadius = 5;
 
+class Bullet {
+    constructor(xPos, yPos, alive) {
+        this.xPos = xPos;
+        this.yPos = yPos;
+        this.alive = alive;
+    }
+}
 function createBullet() {
     bulletCount++;
-    bulletTracker[bulletCount - 1].xPos = x;
-    bulletTracker[bulletCount - 1].yPos = y;
-    bulletTracker[bulletCount - 1].alive = true;
+    let tempObj = new Bullet(x, y, true);
+    bulletTracker.push(tempObj)
 }
 function drawBullets() {
     for (let i = bulletCount - 1; i >= 0; i--) {
@@ -32,6 +38,7 @@ function drawBullets() {
             tempBullet.alive = false;
         }
         else {
+            tempBullet.yPos = tempBullet.yPos - bulletSpeed;
             ctx.beginPath();
             ctx.arc(tempBullet.xPos, tempBullet.yPos, bulletRadius, 0, 2 * Math.PI, true);
             ctx.fillStyle = "red";
