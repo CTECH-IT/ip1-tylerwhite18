@@ -34,7 +34,7 @@ function createBullet() {
 function drawBullets() {
     for (let i = bulletCount - 1; i >= 0; i--) {
         let tempBullet = bulletTracker[i];
-        if (tempBullet.y - bulletSpeed - bulletRadius < 0) {
+        if (tempBullet.yPos - bulletSpeed - bulletRadius < 0) {
             tempBullet.alive = false;
         }
         else {
