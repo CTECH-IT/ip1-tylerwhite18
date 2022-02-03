@@ -22,20 +22,18 @@ function drawPlayer() {
     ctx.closePath();
 }
 function movePlayer() {
-    if (!(x - playerHitboxRadial < 0 || x + playerHitboxRadial > canvas.width || y - playerHitboxRadial < 0 || y + playerHitboxRadial > canvas.height)) {
-        if (rightPressed == true) {
+        if (rightPressed == true && !(x + playerHitboxRadial > canvas.width)) {
             x = x + speedX;
         }
-        else if (leftPressed == true) {
+        else if (leftPressed == true && !(x - playerHitboxRadial < 0)) {
             x = x - speedX;
         }
-        if (upPressed == true) {
-            y = y + speedY;
-        }
-        else if (downPressed == true) {
+        if (upPressed == true && !(y - playerHitboxRadial < 0)) {
             y = y - speedY;
         }
-    }
+        else if (downPressed == true && !(y + playerHitboxRadial > canvas.height)) {
+            y = y + speedY;
+        }
 }
 
 function render() {
