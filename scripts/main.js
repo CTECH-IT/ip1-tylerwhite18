@@ -14,6 +14,38 @@ let leftPressed = false;
 let spacePressed = false;
 let spacePressable = true;
 
+let bulletTracker = [];
+let bulletCount = 0;
+let bulletSpeed = 2;
+let bulletRadius = 5;
+
+function createBullet() {
+    bulletCount++;
+    bulletTracker[bulletCount - 1].xPos = x;
+    bulletTracker[bulletCount - 1].yPos = y;
+    bulletTracker[bulletCount - 1].alive = true;
+}
+function drawBullets() {
+    for (let i = bulletCount - 1; i >= 0; i--) {
+        let tempBullet = bulletTracker[i];
+        if (tempBullet.y - bulletRadius < 0) {
+            tempBullet.alive = false;
+        }
+        else {
+            ctx.beginPath();
+            ctx.arc(tempBullet.xPos, tempBullet.yPos, bulletRadius, 0, 2 * Math.PI, true);
+            ctx.fillStyle = "red";
+            ctx.fill();
+            ctx.closePath();
+        }
+    }
+    bulletTracker = bulletTracker.filter(checkLife);
+    bulletCount = bulletTracker.length;
+}
+function checkLife(inpt) {
+    return inpt.alive == true;
+}
+
 function drawPlayer() {
     ctx.beginPath();
     ctx.rect(x - playerHitboxRadial, y - playerHitboxRadial, playerHitboxRadial * 2, playerHitboxRadial * 2);
@@ -39,6 +71,7 @@ function movePlayer() {
 function render() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
+    drawBullets();
     movePlayer();
     drawPlayer();
 }
@@ -60,6 +93,7 @@ function keyPress(e) {
         if(spacePressable == true) {
             spacePressed = true;
             spacePressable = false;
+            createBullet();
         }
     }
 }
