@@ -4,7 +4,7 @@ let ctx = canvas.getContext("2d");
 let playerHitboxRadial = 10;
 let x = canvas.width / 2;
 let y = canvas.height - playerHitboxRadial;
-let speedX = 3;
+let speedX = 2;
 let speedY = 2;
 
 let upPressed = false;
@@ -13,6 +13,14 @@ let rightPressed = false;
 let leftPressed = false;
 let spacePressed = false;
 let spacePressable = true;
+
+let lives = 3;
+
+function checkLives() {
+    if (lives == 0) {
+        gameOver();
+    }
+}
 
 let bulletTracker = [];
 let bulletCount = 0;
@@ -119,10 +127,10 @@ function checkBullets() {
 
 function checkTouching() { //!!!!!!this is where lives need some adding
     for (const i of enemyTracker) {
-        let xSep = i.xPos - x - playerHitboxRadial;
-        let ySep = i.yPos - y - playerHitboxRadial;
-        if (xSep < i.width && xSep > -1 * i.width && ySep < i.height && ySep > -1 * i.height) { //logic is wrong
-
+        let xSep = Math.abs(i.xPos - x);
+        let ySep = Math.abs(i.yPos - y);
+        if (xSep < i.width + playerHitboxRadial && ySep < i.height + playerHitboxRadial) {
+            i.alive = false;
         }
     }
 }
@@ -150,14 +158,20 @@ function movePlayer() {
         }
 }
 
+function gameOver() {
+    alert("GAME OVER");
+}
+
 function render() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
     checkBullets();
+    checkTouching();
     drawEnemies();
     drawBullets();
     movePlayer();
     drawPlayer();
+    //checkLives();
 }
 
 function keyPress(e) {
@@ -203,4 +217,4 @@ function keyRelease(e) {
 document.addEventListener("keydown", keyPress, false);
 document.addEventListener("keyup", keyRelease, false);
 
-setInterval(render, 10);
+let interval = setInterval(render, 10);
