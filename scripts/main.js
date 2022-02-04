@@ -53,14 +53,16 @@ function checkLife(inpt) {
     return inpt.alive == true;
 }
 
-let enemyWidth = 15; //half the width
-let enemyHeight = 15; //half the width
+let enemyWidth = 10; //half the width
+let enemyHeight = 10; //half the height
 let enemyColor = "green";
+let enemyPadding = 20;
 let enemyDiveChance = 0.025;
 let enemyAttackChance = 0.05;
-let enemyCount = Math.round((canvas.width / (enemyWidth + 10)) - 0.5);
-let enemyRowCount = 5;
+let enemyCount = Math.round((canvas.width / (2 * enemyWidth + enemyPadding)) - 0.5);
+let enemyRowCount = Math.round(((canvas.height / 3) * 2) / (2 * enemyHeight + enemyPadding) - 0.5);
 let enemyTracker = [];
+
 
 class Enemy {
     constructor(xPos, yPos, width, height, color, diveChance, attackChance, alive) {
@@ -75,22 +77,39 @@ class Enemy {
     }
 }
 function populateEnemies() {
-    for (let i = 0; i < enemyCount * enemyRowCount; i++) {
-        let tempEnemy = new Enemy(x, y, enemyWidth, enemyHeight, enemyColor, enemyDiveChance, enemyAttackChance, true);
-        enemyTracker.push(tempEnemy);
+    for (let c = 0; c < enemyCount; c++) {
+        for (let r = 0; r < enemyRowCount; r++) {
+            let tempX = enemyWidth + c * (2 * enemyWidth + enemyPadding);
+            let tempY = enemyHeight + r * (2 * enemyHeight + enemyPadding);
+            let tempEnemy = new Enemy(tempX, tempY, enemyWidth, enemyHeight, enemyColor, enemyDiveChance, enemyAttackChance, true);
+            enemyTracker.push(tempEnemy);
+        }
+    }
+}
+populateEnemies();
+
+function drawEnemies() {
+    for (let i = 0; i < enemyTracker.length; i++) {
+        let tempEnemy = enemyTracker[i];
+        if (tempEnemy.alive == true) {
+            ctx.beginPath();
+            ctx.rect(tempEnemy.xPos - tempEnemy.width, tempEnemy.yPos - tempEnemy.height, tempEnemy.width * 2, tempEnemy.height * 2);
+            ctx.fillStyle = enemyColor;
+            ctx.fill();
+            ctx.closePath();
+        }
     }
 }
 
-function drawEnemies() {
-    for (let c = 0; c < enemyTracker.length; c++) {
-        for (let r = 0; r < enemyTracker[c].length; r++) {
-            let tempEnemy = enemyTracker[c][r];
-            if (tempEnemy.alive == true) {
-                ctx.beginPath();
-                ctx.rect(tempEnemy.xPos - tempEnemy.width, tempEnemy.yPos - tempEnemy.height, tempEnemy.width * 2, tempEnemy.height * 2);
-                ctx.fillStyle = enemyColor;
-                ctx.fill();
-                ctx.closePath();
+function checkBullets() {
+    let rootTwo = Math.SQRT2;
+    for (const i of enemyTracker) {
+        for (const j of bulletTracker) {
+            let dist = Math.sqrt(Math.pow((j.xPos - i.xPos), 2) + Math.pow((j.yPos - j.xPos), 2));
+            let minReq = bulletRadius + rootTwo * i.width;
+            if (dist <= minReq) {
+                i.alive = false;
+                j.alive = false;
             }
         }
     }
@@ -122,6 +141,7 @@ function movePlayer() {
 function render() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
+    drawEnemies();
     drawBullets();
     movePlayer();
     drawPlayer();
