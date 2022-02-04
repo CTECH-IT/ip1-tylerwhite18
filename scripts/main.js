@@ -116,6 +116,16 @@ function checkBullets() {
     }
 }
 
+function checkTouching() { //!!!!!!this is where lives need some adding
+    for (const i of enemyTracker) {
+        let xSep = i.xPos - x - playerHitboxRadial;
+        let ySep = i.yPos - y - playerHitboxRadial;
+        if (xSep < i.width && xSep > -1 * i.width && ySep < i.height && ySep > -1 * i.height) { //logic is wrong
+
+        }
+    }
+}
+
 
 function drawPlayer() {
     ctx.beginPath();
