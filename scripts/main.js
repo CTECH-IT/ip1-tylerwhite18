@@ -29,7 +29,7 @@ class Bullet {
 function createBullet() {
     bulletCount++;
     let tempObj = new Bullet(x, y, true);
-    bulletTracker.push(tempObj)
+    bulletTracker.push(tempObj);
 }
 function drawBullets() {
     for (let i = bulletCount - 1; i >= 0; i--) {
@@ -58,9 +58,12 @@ let enemyHeight = 30;
 let enemyColor = "green";
 let enemyDiveChance = 0.025;
 let enemyAttackChance = 0.05;
+let enemyCount = Math.round((canvas.width / (enemyWidth + 10)) - 0.5);
+let enemyRowCount = 5;
+let enemyTracker = [];
 
 class Enemy {
-    constructor(xPos, yPos, width, height, color, diveChance, attackChance) {
+    constructor(xPos, yPos, width, height, color, diveChance, attackChance, alive) {
         this.xPos = xPos;
         this.yPos = yPos;
         this.width = width;
@@ -68,8 +71,19 @@ class Enemy {
         this.color = color;
         this.diveChance = diveChance;
         this.attackChance = attackChance;
+        this.alive = alive;
     }
 }
+for (let c = enemyCount - 1; c >= 0; i--) { //needs fixing, also make it go top left to bottom right instead of vice versa
+    for(let r = enemyRowCount - 1; r >=0; r--) {
+        let tempEnemy = new Enemy(x, y, enemyWidth, enemyHeight, enemyColor, enemyDiveChance, enemyAttackChance, true);
+        enemyTracker[c].push(tempEnemy);
+    }
+}
+
+/*function drawEnemies() {
+    for (let i = enemyCount; i > )
+}*/
 
 
 function drawPlayer() {
