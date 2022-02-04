@@ -102,14 +102,15 @@ function drawEnemies() {
 }
 
 function checkBullets() {
-    let rootTwo = Math.SQRT2;
+    let minReq = bulletRadius + Math.SQRT2 * enemyWidth;
     for (const i of enemyTracker) {
         for (const j of bulletTracker) {
-            let dist = Math.sqrt(Math.pow((j.xPos - i.xPos), 2) + Math.pow((j.yPos - j.xPos), 2));
-            let minReq = bulletRadius + rootTwo * i.width;
-            if (dist <= minReq) {
-                i.alive = false;
-                j.alive = false;
+            if (i.alive == true && j.alive == true) {
+                let dist = Math.sqrt(Math.pow((j.xPos - i.xPos), 2) + Math.pow((j.yPos - i.yPos), 2));
+                if (dist <= minReq) {
+                    i.alive = false;
+                    j.alive = false;
+                }
             }
         }
     }
@@ -141,6 +142,7 @@ function movePlayer() {
 function render() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
+    checkBullets();
     drawEnemies();
     drawBullets();
     movePlayer();
