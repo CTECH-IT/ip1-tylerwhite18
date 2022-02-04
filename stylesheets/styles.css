@@ -7,4 +7,5 @@ body {
 canvas {
     background-color: #000044;
     display: block;
+    margin: auto;
 }
