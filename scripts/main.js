@@ -56,11 +56,12 @@ function checkLife(inpt) {
 let enemyWidth = 10; //half the width
 let enemyHeight = 10; //half the height
 let enemyColor = "green";
-let enemyPadding = 20;
+let enemyPaddingX = 35;
+let enemyPaddingY = 20;
 let enemyDiveChance = 0.025;
 let enemyAttackChance = 0.05;
-let enemyCount = Math.round((canvas.width / (2 * enemyWidth + enemyPadding)) - 0.5);
-let enemyRowCount = Math.round(((canvas.height / 3) * 2) / (2 * enemyHeight + enemyPadding) - 0.5);
+let enemyCount = Math.round((canvas.width / (2 * enemyWidth + enemyPaddingX)) - 0.5);
+let enemyRowCount = Math.round(((canvas.height / 3) * 2) / (2 * enemyHeight + enemyPaddingY) - 0.5);
 let enemyTracker = [];
 
 
@@ -79,8 +80,8 @@ class Enemy {
 function populateEnemies() {
     for (let c = 0; c < enemyCount; c++) {
         for (let r = 0; r < enemyRowCount; r++) {
-            let tempX = enemyWidth + c * (2 * enemyWidth + enemyPadding);
-            let tempY = enemyHeight + r * (2 * enemyHeight + enemyPadding);
+            let tempX = enemyWidth + c * (2 * enemyWidth + enemyPaddingX);
+            let tempY = enemyHeight + r * (2 * enemyHeight + enemyPaddingY);
             let tempEnemy = new Enemy(tempX, tempY, enemyWidth, enemyHeight, enemyColor, enemyDiveChance, enemyAttackChance, true);
             enemyTracker.push(tempEnemy);
         }
