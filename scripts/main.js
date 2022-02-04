@@ -4,7 +4,7 @@ let ctx = canvas.getContext("2d");
 let playerHitboxRadial = 10;
 let x = canvas.width / 2;
 let y = canvas.height - playerHitboxRadial;
-let speedX = 2;
+let speedX = 3;
 let speedY = 2;
 
 let upPressed = false;
@@ -52,6 +52,25 @@ function drawBullets() {
 function checkLife(inpt) {
     return inpt.alive == true;
 }
+
+let enemyWidth = 30;
+let enemyHeight = 30;
+let enemyColor = "green";
+let enemyDiveChance = 0.025;
+let enemyAttackChance = 0.05;
+
+class Enemy {
+    constructor(xPos, yPos, width, height, color, diveChance, attackChance) {
+        this.xPos = xPos;
+        this.yPos = yPos;
+        this.width = width;
+        this.height = height;
+        this.color = color;
+        this.diveChance = diveChance;
+        this.attackChance = attackChance;
+    }
+}
+
 
 function drawPlayer() {
     ctx.beginPath();
