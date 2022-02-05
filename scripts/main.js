@@ -115,7 +115,7 @@ function moveEnemies() {
     let needMotion = false;
     for (const i of enemyTracker) {
         i.xPos = i.xPos + enemySpeed;
-        if (i.xPos + enemyWidth > canvas.width || i.xPos - enemyWidth < 0) {
+        if ((i.xPos + enemyWidth > canvas.width || i.xPos - enemyWidth < 0) && i.alive == true) {
             needMotion = true;
         }
     }
@@ -189,7 +189,6 @@ function render() {
     drawBullets();
     movePlayer();
     drawPlayer();
-    //moveEnemies();
     //checkLives();
 }
 
