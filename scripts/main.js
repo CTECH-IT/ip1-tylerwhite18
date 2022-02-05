@@ -66,6 +66,7 @@ let enemyHeight = 10; //half the height
 let enemyColor = "green";
 let enemyPaddingX = 35;
 let enemyPaddingY = 20;
+let enemySpeed = 2;
 let enemyDiveChance = 0.025;
 let enemyAttackChance = 0.05;
 let enemyCount = Math.round((canvas.width / (2 * enemyWidth + enemyPaddingX)) - 0.5);
@@ -106,6 +107,23 @@ function drawEnemies() {
             ctx.fillStyle = enemyColor;
             ctx.fill();
             ctx.closePath();
+        }
+    }
+}
+
+function moveEnemies() {
+    let needMotion = false;
+    for (const i of enemyTracker) {
+        i.xPos = i.xPos + enemySpeed;
+        if (i.xPos + enemyWidth > canvas.width || i.xPos - enemyWidth < 0) {
+            needMotion = true;
+        }
+    }
+    if (needMotion == true) {
+        enemySpeed = -1 * enemySpeed;
+        for (const j of enemyTracker) {
+            j.xPos = j.xPos + enemySpeed;
+            j.yPos = j.yPos + enemyHeight * 2 + enemyPaddingY;
         }
     }
 }
@@ -171,6 +189,7 @@ function render() {
     drawBullets();
     movePlayer();
     drawPlayer();
+    moveEnemies();
     //checkLives();
 }
 
