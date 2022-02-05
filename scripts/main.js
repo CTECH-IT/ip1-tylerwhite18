@@ -189,7 +189,7 @@ function render() {
     drawBullets();
     movePlayer();
     drawPlayer();
-    moveEnemies();
+    //moveEnemies();
     //checkLives();
 }
 
@@ -237,3 +237,4 @@ document.addEventListener("keydown", keyPress, false);
 document.addEventListener("keyup", keyRelease, false);
 
 let interval = setInterval(render, 10);
+let enemyMoveInterval = setInterval(moveEnemies, 600);
