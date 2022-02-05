@@ -128,7 +128,7 @@ function moveEnemies() {
     }
     for (const k of enemyTracker) {
         let didFire = Math.random();
-        if (didFire <= enemyAttackChance) {
+        if (didFire <= enemyAttackChance && k.alive == true) {
             let tempFire = new EnemyFire(k.xPos, k.yPos + enemyHeight, true);
             fireTracker.push(tempFire);
         }
@@ -138,7 +138,7 @@ function moveEnemies() {
 class EnemyFire {
     constructor(xPos, yPos, alive) {
         this.xPos = xPos;
-        this.ypos = yPos;
+        this.yPos = yPos;
         this.alive = alive;
     }
 }
@@ -154,6 +154,7 @@ function drawFire() {
             i.alive = false;
         }
         else {
+            i.yPos += fireSpeed;
             ctx.beginPath();
             ctx.rect(i.xPos - fireWidth, i.yPos - fireHeight, fireWidth * 2, fireHeight * 2);
             ctx.fillStyle = fireColor;
