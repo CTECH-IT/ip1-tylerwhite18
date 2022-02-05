@@ -126,6 +126,45 @@ function moveEnemies() {
             j.yPos = j.yPos + enemyHeight * 2 + enemyPaddingY;
         }
     }
+    for (const k of enemyTracker) {
+        let didFire = Math.random();
+        if (didFire <= enemyAttackChance) {
+            let tempFire = new EnemyFire(k.xPos, k.yPos + enemyHeight, true);
+            fireTracker.push(tempFire);
+        }
+    }
+}
+
+class EnemyFire {
+    constructor(xPos, yPos, alive) {
+        this.xPos = xPos;
+        this.ypos = yPos;
+        this.alive = alive;
+    }
+}
+let fireTracker = [];
+let fireHeight = 10; //half height
+let fireWidth = 3; //half width
+let fireSpeed = 2;
+let fireColor = "purple";
+
+function drawFire() {
+    for (const i of fireTracker) {
+        if (i.yPos + fireHeight > canvas.height) {
+            i.alive = false;
+        }
+        else {
+            ctx.beginPath();
+            ctx.rect(i.xPos - fireWidth, i.yPos - fireHeight, fireWidth * 2, fireHeight * 2);
+            ctx.fillStyle = fireColor;
+            ctx.fill();
+            ctx.closePath();
+        }
+    }
+    fireTracker = fireTracker.filter(isFireAlive);
+}
+function isFireAlive(inpt) {
+    return inpt.alive == true;
 }
 
 function checkBullets() {
@@ -186,6 +225,7 @@ function render() {
     
     checkBullets();
     checkTouching();
+    drawFire();
     drawEnemies();
     drawBullets();
     movePlayer();
