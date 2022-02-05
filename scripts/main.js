@@ -147,8 +147,9 @@ function checkTouching() { //!!!!!!this is where lives need some adding
     for (const i of enemyTracker) {
         let xSep = Math.abs(i.xPos - x);
         let ySep = Math.abs(i.yPos - y);
-        if (xSep < i.width + playerHitboxRadial && ySep < i.height + playerHitboxRadial) {
+        if ((xSep < i.width + playerHitboxRadial && ySep < i.height + playerHitboxRadial) && i.alive == true) {
             i.alive = false;
+            lives--;
         }
     }
 }
@@ -189,7 +190,7 @@ function render() {
     drawBullets();
     movePlayer();
     drawPlayer();
-    //checkLives();
+    checkLives();
 }
 
 function keyPress(e) {
