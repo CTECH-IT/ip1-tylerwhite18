@@ -67,8 +67,8 @@ let enemyColor = "green";
 let enemyPaddingX = 35;
 let enemyPaddingY = 20;
 let enemySpeed = 2;
-let enemyDiveChance = 0.025;
-let enemyAttackChance = 0.05;
+let enemyDiveChance = 0.0025;
+let enemyAttackChance = 0.005;
 let enemyCount = Math.round((canvas.width / (2 * enemyWidth + enemyPaddingX)) - 0.5);
 let enemyRowCount = Math.round(((canvas.height / 3) * 2) / (2 * enemyHeight + enemyPaddingY) - 0.5);
 let enemyTracker = [];
@@ -143,8 +143,8 @@ class EnemyFire {
     }
 }
 let fireTracker = [];
-let fireHeight = 10; //half height
-let fireWidth = 3; //half width
+let fireHeight = 7; //half height
+let fireWidth = 2; //half width
 let fireSpeed = 2;
 let fireColor = "purple";
 
@@ -166,6 +166,17 @@ function drawFire() {
 }
 function isFireAlive(inpt) {
     return inpt.alive == true;
+}
+
+function checkFire() {
+    for (const i of fireTracker) {
+        let xSep = Math.abs(i.xPos - x);
+        let ySep = Math.abs(i.yPos - y);
+        if ((xSep < fireWidth + playerHitboxRadial && ySep < fireHeight + playerHitboxRadial) && i.alive == true) {
+            i.alive = false;
+            lives--;
+        }
+    }
 }
 
 function checkBullets() {
@@ -226,6 +237,7 @@ function render() {
     
     checkBullets();
     checkTouching();
+    checkFire();
     drawFire();
     drawEnemies();
     drawBullets();
