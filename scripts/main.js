@@ -1,6 +1,7 @@
 let canvas = document.getElementById("screen");
 let ctx = canvas.getContext("2d");
 let infoBar = document.getElementById("lifeCounter");
+let scoreBar = document.getElementById("score");
 
 let playerHitboxRadial = 10;
 let x = canvas.width / 2;
@@ -15,12 +16,29 @@ let leftPressed = false;
 let spacePressed = false;
 let spacePressable = true;
 
+function newRound() {
+    x = canvas.width / 2;
+    y = canvas.height - playerHitboxRadial;
+    enemyTracker.length = 0;
+    populateEnemies();
+}
+
 let lives = 3;
 
 function checkLives() {
     infoBar.innerText = "Lives: " + lives;
     if (lives == 0) {
         gameOver();
+    }
+}
+
+let score = 0;
+const scoreIncrement = 100;
+let level = 1;
+function checkScore() {
+    scoreBar.innerText = "Score: " + score;
+    if (score == scoreIncrement * enemyCount * enemyRowCount) {
+        newRound();
     }
 }
 
@@ -190,6 +208,7 @@ function checkBullets() {
                 if (dist <= minReq) {
                     i.alive = false;
                     j.alive = false;
+                    score += scoreIncrement;
                 }
             }
         }
@@ -216,18 +235,18 @@ function drawPlayer() {
     ctx.closePath();
 }
 function movePlayer() {
-        if (rightPressed == true && !(x + playerHitboxRadial > canvas.width)) {
-            x = x + speedX;
-        }
-        else if (leftPressed == true && !(x - playerHitboxRadial < 0)) {
-            x = x - speedX;
-        }
-        if (upPressed == true && !(y - playerHitboxRadial < 0)) {
-            y = y - speedY;
-        }
-        else if (downPressed == true && !(y + playerHitboxRadial > canvas.height)) {
-            y = y + speedY;
-        }
+    if (rightPressed == true && !(x + playerHitboxRadial > canvas.width)) {
+        x = x + speedX;
+    }
+    if (leftPressed == true && !(x - playerHitboxRadial < 0)) {
+        x = x - speedX;
+    }
+    if (upPressed == true && !(y - playerHitboxRadial < 0)) {
+        y = y - speedY;
+    }
+    if (downPressed == true && !(y + playerHitboxRadial > canvas.height)) {
+        y = y + speedY;
+    }
 }
 
 function gameOver() {
@@ -246,19 +265,20 @@ function render() {
     movePlayer();
     drawPlayer();
     checkLives();
+    checkScore();
 }
 
 function keyPress(e) {
     if (e.keyCode == "39") { //check if right is pressed
         rightPressed = true;
     }
-    else if (e.keyCode == "37" && rightPressed == false) { //check if left is pressed
+    if (e.keyCode == "37") { //check if left is pressed
         leftPressed = true;
     }
-    if (e.keyCode == "38") { //check if right is pressed
+    if (e.keyCode == "38") { //check if up is pressed
         upPressed = true;
     }
-    else if (e.keyCode == "40" && upPressed == false) { //check if left is pressed
+    if (e.keyCode == "40") { //check if down is pressed
         downPressed = true;
     }
     if (e.keyCode == "32") {
@@ -276,14 +296,15 @@ function keyRelease(e) {
     if (e.keyCode == "37") { //check if left is pressed
         leftPressed = false;
     }
-    if (e.keyCode == "38") { //check if right is pressed
+    if (e.keyCode == "38") { //check if up is pressed
         upPressed = false;
     }
-    if (e.keyCode == "40") { //check if left is pressed
+    if (e.keyCode == "40") { //check if down is pressed
         downPressed = false;
     }
     if (e.keyCode == "32") {
         spacePressed = false;
+        spacePressable = true;
     }
 }
 
@@ -296,4 +317,4 @@ document.addEventListener("keyup", keyRelease, false);
 
 let interval = setInterval(render, 10);
 let enemyMoveInterval = setInterval(moveEnemies, 600);
-let canFireInterval = setInterval(nowShoot, 450);
+//let canFireInterval = setInterval(nowShoot, 450);
