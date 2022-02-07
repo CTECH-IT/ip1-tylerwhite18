@@ -16,13 +16,6 @@ let leftPressed = false;
 let spacePressed = false;
 let spacePressable = true;
 
-function newRound() {
-    x = canvas.width / 2;
-    y = canvas.height - playerHitboxRadial;
-    enemyTracker.length = 0;
-    populateEnemies();
-}
-
 let lives = 3;
 
 function checkLives() {
@@ -37,7 +30,7 @@ const scoreIncrement = 100;
 let level = 1;
 function checkScore() {
     scoreBar.innerText = "Score: " + score;
-    if (score == scoreIncrement * enemyCount * enemyRowCount) {
+    if (score == scoreIncrement * enemyCount * enemyRowCount * level) {
         newRound();
     }
 }
@@ -88,6 +81,8 @@ let enemyPaddingX = 35;
 let enemyPaddingY = 20;
 let enemySpeed = 2;
 let enemyDiveChance = 0.0025;
+const enemyAttackIncrement = 0.005;
+const enemyDiveIncrement = 0.0025;
 let enemyAttackChance = 0.005;
 let enemyCount = Math.round((canvas.width / (2 * enemyWidth + enemyPaddingX)) - 0.5);
 let enemyRowCount = Math.round(((canvas.height / 3) * 2) / (2 * enemyHeight + enemyPaddingY) - 0.5);
@@ -310,6 +305,17 @@ function keyRelease(e) {
 
 function nowShoot() {
     spacePressable = true;
+}
+
+function newRound() {
+    level++;
+    lives++;
+    enemySpeed = Math.abs(enemySpeed) + 1;
+    enemyAttackChance = level * enemyAttackIncrement;
+    x = canvas.width / 2;
+    y = canvas.height - playerHitboxRadial;
+    enemyTracker.length = 0;
+    populateEnemies();
 }
 
 document.addEventListener("keydown", keyPress, false);
