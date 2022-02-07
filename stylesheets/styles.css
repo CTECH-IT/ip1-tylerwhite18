@@ -13,5 +13,5 @@ canvas {
     font-family: 'Courier New', Courier, monospace;
     color: rgba(200, 35, 35, 0.7);
     background-color: black;
-    margin: auto;
+    text-align: center;
 }
