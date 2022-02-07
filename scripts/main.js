@@ -281,9 +281,12 @@ function keyRelease(e) {
         downPressed = false;
     }
     if (e.keyCode == "32") {
-        spacePressable = true;
         spacePressed = false;
     }
+}
+
+function nowShoot() {
+    spacePressable = true;
 }
 
 document.addEventListener("keydown", keyPress, false);
@@ -291,3 +294,4 @@ document.addEventListener("keyup", keyRelease, false);
 
 let interval = setInterval(render, 10);
 let enemyMoveInterval = setInterval(moveEnemies, 600);
+let canFireInterval = setInterval(nowShoot, 450);
