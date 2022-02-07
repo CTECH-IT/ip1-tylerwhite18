@@ -1,5 +1,6 @@
 let canvas = document.getElementById("screen");
 let ctx = canvas.getContext("2d");
+let infoBar = document.getElementById("lifeCounter");
 
 let playerHitboxRadial = 10;
 let x = canvas.width / 2;
@@ -17,6 +18,7 @@ let spacePressable = true;
 let lives = 3;
 
 function checkLives() {
+    infoBar.innerText = "Lives: " + lives;
     if (lives == 0) {
         gameOver();
     }
