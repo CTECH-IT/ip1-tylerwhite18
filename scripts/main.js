@@ -180,6 +180,9 @@ function moveEnemies() {
                 let tempFire = new EnemyFire(k.xPos, k.yPos + enemyHeight, true);
                 fireTracker.push(tempFire);
             }
+            if (k.yPos + enemyHeight > canvas.height && k.alive == true) {
+                gameOver();
+            }
         }
         let didGoStupid = Math.random();
         if (didGoStupid <= enemyDiveChance && k.alive == true) {
@@ -240,10 +243,19 @@ function checkBullets() {
     let minReq = bulletRadius + Math.SQRT2 * enemyWidth;
     for (const i of enemyTracker) {
         for (const j of bulletTracker) {
-            if (i.alive == true && j.alive == true) {
+            if (i.alive == true && j.alive == true && i.rogue == false) {
                 let dist = Math.sqrt(Math.pow((j.xPos - i.xPos), 2) + Math.pow((j.yPos - i.yPos), 2));
                 if (dist <= minReq) {
                     i.alive = false;
+                    j.alive = false;
+                    score += scoreIncrement + 15 * (level - 1);
+                }
+            }
+            else if (i.alive == true && j.alive == true && i.rogue == true) {
+                let dist = Math.sqrt(Math.pow((j.xPos - i.rogueX), 2) + Math.pow((j.yPos - i.rogueY), 2));
+                if (dist <= minReq) {
+                    i.alive = false;
+                    i.rogue = false;
                     j.alive = false;
                     score += scoreIncrement + 15 * (level - 1);
                 }
@@ -254,12 +266,24 @@ function checkBullets() {
 
 function checkTouching() { //!!!!!!this is where lives need some adding
     for (const i of enemyTracker) {
-        let xSep = Math.abs(i.xPos - x);
-        let ySep = Math.abs(i.yPos - y);
-        if ((xSep < i.width + playerHitboxRadial && ySep < i.height + playerHitboxRadial) && i.alive == true) {
-            i.alive = false;
-            lives--;
-            score -= scoreIncrement * (level + 1);
+        if (i.rogue == false) {
+            let xSep = Math.abs(i.xPos - x);
+            let ySep = Math.abs(i.yPos - y);
+            if ((xSep < i.width + playerHitboxRadial && ySep < i.height + playerHitboxRadial) && i.alive == true) {
+                i.alive = false;
+                lives--;
+                score -= scoreIncrement * (level + 1);
+            }
+        }
+        else if (i.rogue == true) {
+            let xSep = Math.abs(i.rogueX - x);
+            let ySep = Math.abs(i.rogueY - y);
+            if ((xSep < i.width + playerHitboxRadial && ySep < i.height + playerHitboxRadial) && i.alive == true) {
+                i.alive = false;
+                i.rogue = false
+                lives--;
+                score -= scoreIncrement * (level + 1);
+            }
         }
     }
 }
