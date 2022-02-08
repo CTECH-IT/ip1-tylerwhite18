@@ -76,17 +76,18 @@ let enemyColor = "green";
 let enemyPaddingX = 35;
 let enemyPaddingY = 20;
 let enemySpeed = 2;
-let enemyDiveChance = 0.0025;
+let enemyDiveChance = 0.001;
 const enemyAttackIncrement = 0.005;
 const enemyDiveIncrement = 0.0025;
 let enemyAttackChance = 0.005;
 let enemyCount = Math.round((canvas.width / (2 * enemyWidth + enemyPaddingX)) - 0.5);
 let enemyRowCount = Math.round(((canvas.height / 3) * 2) / (2 * enemyHeight + enemyPaddingY) - 0.5);
 let enemyTracker = [];
+const enemyRogueSpeed = 2;
 
 
 class Enemy {
-    constructor(xPos, yPos, width, height, color, diveChance, attackChance, alive) {
+    constructor(xPos, yPos, width, height, color, diveChance, attackChance, alive, rogue, rogueX, rogueY, rogueDY, rogueDX) {
         this.xPos = xPos;
         this.yPos = yPos;
         this.width = width;
@@ -95,6 +96,11 @@ class Enemy {
         this.diveChance = diveChance;
         this.attackChance = attackChance;
         this.alive = alive;
+        this.rogue = rogue;
+        this.rogueX = rogueX;
+        this.rogueY = rogueY;
+        this.rogueDY = rogueDY;
+        this.rogueDX = rogueDX;
     }
 }
 function populateEnemies() {
@@ -102,7 +108,7 @@ function populateEnemies() {
         for (let r = 0; r < enemyRowCount; r++) {
             let tempX = enemyWidth + c * (2 * enemyWidth + enemyPaddingX);
             let tempY = enemyHeight + r * (2 * enemyHeight + enemyPaddingY);
-            let tempEnemy = new Enemy(tempX, tempY, enemyWidth, enemyHeight, enemyColor, enemyDiveChance, enemyAttackChance, true);
+            let tempEnemy = new Enemy(tempX, tempY, enemyWidth, enemyHeight, enemyColor, enemyDiveChance, enemyAttackChance, true, false, tempX, tempY, enemyRogueSpeed, 0);
             enemyTracker.push(tempEnemy);
         }
     }
@@ -112,12 +118,42 @@ populateEnemies();
 function drawEnemies() {
     for (let i = 0; i < enemyTracker.length; i++) {
         let tempEnemy = enemyTracker[i];
-        if (tempEnemy.alive == true) {
+        if (tempEnemy.rogueY == tempEnemy.yPos && tempEnemy.rogue == true) {
+            tempEnemy.rogueDY = 0;
+            if (tempEnemy.rogueX == tempEnemy.xPos) {
+                tempEnemy.rogue = false;
+            }
+        }
+        if (tempEnemy.alive == true && tempEnemy.rogue == false) {
             ctx.beginPath();
             ctx.rect(tempEnemy.xPos - tempEnemy.width, tempEnemy.yPos - tempEnemy.height, tempEnemy.width * 2, tempEnemy.height * 2);
             ctx.fillStyle = enemyColor;
             ctx.fill();
             ctx.closePath();
+        }
+        else if (tempEnemy.alive == true && tempEnemy.rogue == true) {
+            if (tempEnemy.rogueY + enemyWidth > canvas.height) {
+                tempEnemy.rogueDY = -1 * tempEnemy.rogueDY;
+            }
+            if (tempEnemy.rogueDY < 0) {
+                if (Math.abs(tempEnemy.rogueX - tempEnemy.xPos) <= enemyRogueSpeed) {
+                    tempEnemy.rogueX = tempEnemy.xPos;
+                }
+                else if ((tempEnemy.rogueX - tempEnemy.xPos) < 0) {
+                    tempEnemy.rogueDX = enemyRogueSpeed;
+                }
+                else if ((tempEnemy.rogueX - tempEnemy.xPos) > 0) {
+                    tempEnemy.rogueDX = -1 * enemyRogueSpeed;
+                }
+            }
+            tempEnemy.rogueX = tempEnemy.rogueX + tempEnemy.rogueDX;
+            tempEnemy.rogueY = tempEnemy.rogueY + tempEnemy.rogueDY;
+            ctx.beginPath();
+            ctx.rect(tempEnemy.rogueX - tempEnemy.width, tempEnemy.rogueY - tempEnemy.height, tempEnemy.width * 2, tempEnemy.height * 2);
+            ctx.fillStyle = enemyColor;
+            ctx.fill();
+            ctx.closePath();
+            tempEnemy.rogueDX = 0;
         }
     }
 }
@@ -138,10 +174,20 @@ function moveEnemies() {
         }
     }
     for (const k of enemyTracker) {
-        let didFire = Math.random();
-        if (didFire <= enemyAttackChance && k.alive == true) {
-            let tempFire = new EnemyFire(k.xPos, k.yPos + enemyHeight, true);
-            fireTracker.push(tempFire);
+        if (k.rogue == false) {
+            let didFire = Math.random();
+            if (didFire <= enemyAttackChance && k.alive == true) {
+                let tempFire = new EnemyFire(k.xPos, k.yPos + enemyHeight, true);
+                fireTracker.push(tempFire);
+            }
+        }
+        let didGoStupid = Math.random();
+        if (didGoStupid <= enemyDiveChance && k.alive == true) {
+            k.rogue = true;
+            k.rogueX = k.xPos;
+            k.rogueY = k.yPos + enemyRogueSpeed;
+            k.rogueDY = enemyRogueSpeed;
+            k.rogueDX = 0;
         }
     }
 }
