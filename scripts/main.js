@@ -9,6 +9,10 @@ let y = canvas.height - playerHitboxRadial;
 let speedX = 2;
 let speedY = 2;
 
+let score = 0;
+const scoreIncrement = 100;
+let level = 1;
+
 let upPressed = false;
 let downPressed = false;
 let rightPressed = false;
@@ -22,16 +26,6 @@ function checkLives() {
     infoBar.innerText = "Lives: " + lives;
     if (lives == 0) {
         gameOver();
-    }
-}
-
-let score = 0;
-const scoreIncrement = 100;
-let level = 1;
-function checkScore() {
-    scoreBar.innerText = "Score: " + score;
-    if (score == scoreIncrement * enemyCount * enemyRowCount * level) {
-        newRound();
     }
 }
 
@@ -263,6 +257,12 @@ function render() {
     checkScore();
 }
 
+let canFireInterval = setInterval(nowShoot, 450);
+clearInterval(canFireInterval);
+function nowShoot() {
+    createBullet();
+}
+
 function keyPress(e) {
     if (e.keyCode == "39") { //check if right is pressed
         rightPressed = true;
@@ -281,6 +281,7 @@ function keyPress(e) {
             spacePressed = true;
             spacePressable = false;
             createBullet();
+            canFireInterval = setInterval(nowShoot, 450);
         }
     }
 }
@@ -300,16 +301,34 @@ function keyRelease(e) {
     if (e.keyCode == "32") {
         spacePressed = false;
         spacePressable = true;
+        clearInterval(canFireInterval);
     }
 }
 
-function nowShoot() {
-    spacePressable = true;
+let incrementability = 1;
+function checkScore() {
+    scoreBar.innerText = "Score: " + score;
+    let aliveTrackArray = enemyTracker.filter(aliveTrackThing);
+    if (aliveTrackArray.length == 0) {
+        newRound();
+    }
+    else if (aliveTrackArray.length <= enemyTracker.length / 4 && incrementability == 2) {
+        enemyAttackChance *= 3;
+        incrementability++;
+    }
+    else if (aliveTrackArray.length <= enemyTracker.length / 2 && incrementability == 1) {
+        enemyAttackChance *= 2;
+        incrementability++;
+    }
+}
+function aliveTrackThing(inpt) {
+    return inpt.alive == true;
 }
 
 function newRound() {
     level++;
     lives++;
+    incrementability = 1;
     enemySpeed = Math.abs(enemySpeed) + 1;
     enemyAttackChance = level * enemyAttackIncrement;
     x = canvas.width / 2;
@@ -323,4 +342,3 @@ document.addEventListener("keyup", keyRelease, false);
 
 let interval = setInterval(render, 10);
 let enemyMoveInterval = setInterval(moveEnemies, 600);
-//let canFireInterval = setInterval(nowShoot, 450);
