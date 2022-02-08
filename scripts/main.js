@@ -8,6 +8,7 @@ let x = canvas.width / 2;
 let y = canvas.height - playerHitboxRadial;
 let speedX = 2;
 let speedY = 2;
+const fireRate = 450;
 
 let score = 0;
 const scoreIncrement = 100;
@@ -33,6 +34,7 @@ let bulletTracker = [];
 let bulletCount = 0;
 let bulletSpeed = 2;
 let bulletRadius = 5;
+let bulletFirable = true;
 
 class Bullet {
     constructor(xPos, yPos, alive) {
@@ -197,7 +199,7 @@ function checkBullets() {
                 if (dist <= minReq) {
                     i.alive = false;
                     j.alive = false;
-                    score += scoreIncrement;
+                    score += scoreIncrement + 15 * (level - 1);
                 }
             }
         }
@@ -211,6 +213,7 @@ function checkTouching() { //!!!!!!this is where lives need some adding
         if ((xSep < i.width + playerHitboxRadial && ySep < i.height + playerHitboxRadial) && i.alive == true) {
             i.alive = false;
             lives--;
+            score -= scoreIncrement * (level + 1);
         }
     }
 }
@@ -239,7 +242,10 @@ function movePlayer() {
 }
 
 function gameOver() {
-    alert("GAME OVER");
+    alert("Game Over. Final Score: " + score);
+    document.location.reload();
+    clearInterval(interval);
+    clearInterval(enemyMoveInterval);
 }
 
 function render() {
@@ -257,10 +263,15 @@ function render() {
     checkScore();
 }
 
-let canFireInterval = setInterval(nowShoot, 450);
+let canFireInterval = setInterval(nowShoot, fireRate);
 clearInterval(canFireInterval);
+let canReallyFireInterval = setInterval(canFire, fireRate);
+clearInterval(canReallyFireInterval);
 function nowShoot() {
     createBullet();
+}
+function canFire() {
+    bulletFirable = true;
 }
 
 function keyPress(e) {
@@ -280,8 +291,13 @@ function keyPress(e) {
         if(spacePressable == true) {
             spacePressed = true;
             spacePressable = false;
-            createBullet();
-            canFireInterval = setInterval(nowShoot, 450);
+            if (bulletFirable == true) {
+                createBullet();
+                bulletFirable = false;
+                clearInterval(canReallyFireInterval);
+                canReallyFireInterval = setInterval(canFire, fireRate);
+            }
+            canFireInterval = setInterval(nowShoot, fireRate);
         }
     }
 }
