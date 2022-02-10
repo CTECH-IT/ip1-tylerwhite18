@@ -2,6 +2,9 @@ let canvas = document.getElementById("screen");
 let ctx = canvas.getContext("2d");
 let infoBar = document.getElementById("lifeCounter");
 let scoreBar = document.getElementById("score");
+let title = document.getElementById("page-title");
+
+let titleColor = 1;
 
 let playerHitboxRadial = 10;
 let x = canvas.width / 2;
@@ -78,12 +81,13 @@ let enemyPaddingY = 20;
 let enemySpeed = 2;
 let enemyDiveChance = 0.001;
 const enemyAttackIncrement = 0.005;
-const enemyDiveIncrement = 0.0025;
+const enemyDiveIncrement = 0.001;
 let enemyAttackChance = 0.005;
 let enemyCount = Math.round((canvas.width / (2 * enemyWidth + enemyPaddingX)) - 0.5);
-let enemyRowCount = Math.round(((canvas.height / 3) * 2) / (2 * enemyHeight + enemyPaddingY) - 0.5);
+let enemyRowCount = Math.round(((canvas.height / 4) * 2) / (2 * enemyHeight + enemyPaddingY) - 0.5);
 let enemyTracker = [];
 const enemyRogueSpeed = 2;
+let enemyMoveTiming = 600;
 
 
 class Enemy {
@@ -316,6 +320,7 @@ function gameOver() {
     document.location.reload();
     clearInterval(interval);
     clearInterval(enemyMoveInterval);
+    clearInterval(titleInterval);
 }
 
 function render() {
@@ -391,6 +396,9 @@ function keyRelease(e) {
     }
 }
 
+document.addEventListener("keydown", keyPress, false);
+document.addEventListener("keyup", keyRelease, false);
+
 let incrementability = 1;
 function checkScore() {
     scoreBar.innerText = "Score: " + score;
@@ -400,9 +408,11 @@ function checkScore() {
     }
     else if (aliveTrackArray.length <= enemyTracker.length / 4 && incrementability == 2) {
         enemyAttackChance *= 3;
+        enemyDiveChance *= 3;
         incrementability++;
     }
     else if (aliveTrackArray.length <= enemyTracker.length / 2 && incrementability == 1) {
+        enemyAttackChance *= 2;
         enemyAttackChance *= 2;
         incrementability++;
     }
@@ -411,20 +421,40 @@ function aliveTrackThing(inpt) {
     return inpt.alive == true;
 }
 
+function changeTitleColor() {
+    if (titleColor == 1) {
+        titleColor++;
+        title.style.color = "red";
+    }
+    else if (titleColor == 2) {
+        titleColor++;
+        title.style.color = "green";
+    }
+    else if (titleColor == 3) {
+        titleColor = 1;
+        title.style.color = "blue";
+    }
+}
+
+let interval = setInterval(render, 10);
+let enemyMoveInterval = setInterval(moveEnemies, enemyMoveTiming);
+let titleInterval = setInterval(changeTitleColor, 800);
+
 function newRound() {
     level++;
     lives++;
     incrementability = 1;
-    enemySpeed = Math.abs(enemySpeed) + 1;
+    enemySpeed = Math.abs(enemySpeed);
+    clearInterval(enemyMoveInterval);
+    if (enemyMoveTiming > 30) {
+        enemyMoveTiming = enemyMoveTiming - 30;
+    }
+    enemyMoveInterval = setInterval(moveEnemies, enemyMoveTiming);
     enemyAttackChance = level * enemyAttackIncrement;
+    enemyDiveChance = level * enemyDiveIncrement;
     x = canvas.width / 2;
     y = canvas.height - playerHitboxRadial;
     enemyTracker.length = 0;
+    fireTracker.length = 0;
     populateEnemies();
 }
-
-document.addEventListener("keydown", keyPress, false);
-document.addEventListener("keyup", keyRelease, false);
-
-let interval = setInterval(render, 10);
-let enemyMoveInterval = setInterval(moveEnemies, 600);
