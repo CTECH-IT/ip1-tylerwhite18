@@ -79,10 +79,10 @@ let enemyColor = "green";
 let enemyPaddingX = 35;
 let enemyPaddingY = 20;
 let enemySpeed = 2;
-let enemyDiveChance = 0.001;
-const enemyAttackIncrement = 0.005;
-const enemyDiveIncrement = 0.001;
-let enemyAttackChance = 0.005;
+let enemyDiveChance = 0.0025;
+const enemyAttackIncrement = 0.004;
+const enemyDiveIncrement = 0.0025;
+let enemyAttackChance = 0.004;
 let enemyCount = Math.round((canvas.width / (2 * enemyWidth + enemyPaddingX)) - 0.5);
 let enemyRowCount = Math.round(((canvas.height / 4) * 2) / (2 * enemyHeight + enemyPaddingY) - 0.5);
 let enemyTracker = [];
@@ -307,7 +307,7 @@ function movePlayer() {
     if (leftPressed == true && !(x - playerHitboxRadial < 0)) {
         x = x - speedX;
     }
-    if (upPressed == true && !(y - playerHitboxRadial < 0)) {
+    if (upPressed == true && !(y - playerHitboxRadial < (canvas.height / 4) * 3)) {
         y = y - speedY;
     }
     if (downPressed == true && !(y + playerHitboxRadial > canvas.height)) {
@@ -446,8 +446,8 @@ function newRound() {
     incrementability = 1;
     enemySpeed = Math.abs(enemySpeed);
     clearInterval(enemyMoveInterval);
-    if (enemyMoveTiming > 30) {
-        enemyMoveTiming = enemyMoveTiming - 30;
+    if (enemyMoveTiming > 45) {
+        enemyMoveTiming = enemyMoveTiming - 45;
     }
     enemyMoveInterval = setInterval(moveEnemies, enemyMoveTiming);
     enemyAttackChance = level * enemyAttackIncrement;
@@ -456,5 +456,7 @@ function newRound() {
     y = canvas.height - playerHitboxRadial;
     enemyTracker.length = 0;
     fireTracker.length = 0;
+    bulletTracker.length = 0;
+    bulletCount = 0;
     populateEnemies();
 }
