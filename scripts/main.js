@@ -26,7 +26,7 @@ let spacePressable = true;
 
 let lives = 3;
 
-function checkLives() {
+function checkLives() { //ends the game if the player dies
     infoBar.innerText = "Lives: " + lives;
     if (lives == 0) {
         gameOver();
@@ -39,19 +39,19 @@ let bulletSpeed = 2;
 let bulletRadius = 5;
 let bulletFirable = true;
 
-class Bullet {
+class Bullet { //a projectile from the player
     constructor(xPos, yPos, alive) {
         this.xPos = xPos;
         this.yPos = yPos;
         this.alive = alive;
     }
 }
-function createBullet() {
+function createBullet() { //fires a bullet from the player's x,y
     bulletCount++;
     let tempObj = new Bullet(x, y, true);
     bulletTracker.push(tempObj);
 }
-function drawBullets() {
+function drawBullets() { //puts all bullets on the list onto the canvas
     for (let i = bulletCount - 1; i >= 0; i--) {
         let tempBullet = bulletTracker[i];
         if (tempBullet.yPos - bulletRadius < 0) {
@@ -90,7 +90,7 @@ const enemyRogueSpeed = 2;
 let enemyMoveTiming = 600;
 
 
-class Enemy {
+class Enemy { //the bad green squares
     constructor(xPos, yPos, width, height, color, diveChance, attackChance, alive, rogue, rogueX, rogueY, rogueDY, rogueDX) {
         this.xPos = xPos;
         this.yPos = yPos;
@@ -107,7 +107,7 @@ class Enemy {
         this.rogueDX = rogueDX;
     }
 }
-function populateEnemies() {
+function populateEnemies() { //creates an array with all the enemies spaced out evenly to fit the screen
     for (let c = 0; c < enemyCount; c++) {
         for (let r = 0; r < enemyRowCount; r++) {
             let tempX = enemyWidth + c * (2 * enemyWidth + enemyPaddingX);
@@ -119,7 +119,7 @@ function populateEnemies() {
 }
 populateEnemies();
 
-function drawEnemies() {
+function drawEnemies() { //puts all enemies that are still alive onto the canvas
     for (let i = 0; i < enemyTracker.length; i++) {
         let tempEnemy = enemyTracker[i];
         if (tempEnemy.rogueY == tempEnemy.yPos && tempEnemy.rogue == true) {
@@ -162,7 +162,7 @@ function drawEnemies() {
     }
 }
 
-function moveEnemies() {
+function moveEnemies() { //called seperately from draw, changes enemy x,y
     let needMotion = false;
     for (const i of enemyTracker) {
         i.xPos = i.xPos + enemySpeed;
@@ -199,7 +199,7 @@ function moveEnemies() {
     }
 }
 
-class EnemyFire {
+class EnemyFire { //the enemy bullets
     constructor(xPos, yPos, alive) {
         this.xPos = xPos;
         this.yPos = yPos;
@@ -212,7 +212,7 @@ let fireWidth = 2; //half width
 let fireSpeed = 2;
 let fireColor = "purple";
 
-function drawFire() {
+function drawFire() { //draws all existing enemy bullets on the screen
     for (const i of fireTracker) {
         if (i.yPos + fireHeight > canvas.height) {
             i.alive = false;
@@ -232,7 +232,7 @@ function isFireAlive(inpt) {
     return inpt.alive == true;
 }
 
-function checkFire() {
+function checkFire() { //checks if an enemy bullet hit the player and removes lives
     for (const i of fireTracker) {
         let xSep = Math.abs(i.xPos - x);
         let ySep = Math.abs(i.yPos - y);
@@ -243,7 +243,7 @@ function checkFire() {
     }
 }
 
-function checkBullets() {
+function checkBullets() { //check if a player bullet hit an enemy and if so kill the enemy
     let minReq = bulletRadius + Math.SQRT2 * enemyWidth;
     for (const i of enemyTracker) {
         for (const j of bulletTracker) {
@@ -268,7 +268,7 @@ function checkBullets() {
     }
 }
 
-function checkTouching() { //!!!!!!this is where lives need some adding
+function checkTouching() { //if an enemy is touching a player, kill it but remove a life
     for (const i of enemyTracker) {
         if (i.rogue == false) {
             let xSep = Math.abs(i.xPos - x);
@@ -293,7 +293,7 @@ function checkTouching() { //!!!!!!this is where lives need some adding
 }
 
 
-function drawPlayer() {
+function drawPlayer() { //puts the player on the canvas at x,y
     ctx.beginPath();
     ctx.rect(x - playerHitboxRadial, y - playerHitboxRadial, playerHitboxRadial * 2, playerHitboxRadial * 2);
     ctx.fillStyle = "red";
@@ -315,7 +315,7 @@ function movePlayer() {
     }
 }
 
-function gameOver() {
+function gameOver() { //ends the game and tells user their score
     alert("Game Over. Final Score: " + score);
     document.location.reload();
     clearInterval(interval);
@@ -323,7 +323,7 @@ function gameOver() {
     clearInterval(titleInterval);
 }
 
-function render() {
+function render() { //called to execute all draw on canvas functions and check if touching functions
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
     checkBullets();
@@ -338,7 +338,7 @@ function render() {
     checkScore();
 }
 
-let canFireInterval = setInterval(nowShoot, fireRate);
+let canFireInterval = setInterval(nowShoot, fireRate); //this block is used for controlling the fire rate
 clearInterval(canFireInterval);
 let canReallyFireInterval = setInterval(canFire, fireRate);
 clearInterval(canReallyFireInterval);
@@ -349,7 +349,7 @@ function canFire() {
     bulletFirable = true;
 }
 
-function keyPress(e) {
+function keyPress(e) { //when a key is pressed, take actions according to the key
     if (e.keyCode == "39") { //check if right is pressed
         rightPressed = true;
     }
@@ -376,7 +376,7 @@ function keyPress(e) {
         }
     }
 }
-function keyRelease(e) {
+function keyRelease(e) { //when a key is released, stop doing that keys attributed action
     if (e.keyCode == "39") { //check if right is pressed
         rightPressed = false;
     }
@@ -400,7 +400,7 @@ document.addEventListener("keydown", keyPress, false);
 document.addEventListener("keyup", keyRelease, false);
 
 let incrementability = 1;
-function checkScore() {
+function checkScore() { //actually has nothing to do with score, counts how many enemies are left and either increases difficulty or starts a new wave
     scoreBar.innerText = "Score: " + score;
     let aliveTrackArray = enemyTracker.filter(aliveTrackThing);
     if (aliveTrackArray.length == 0) {
@@ -421,7 +421,7 @@ function aliveTrackThing(inpt) {
     return inpt.alive == true;
 }
 
-function changeTitleColor() {
+function changeTitleColor() { //the logic for putting the title into epilepsy mode, although right now the color change rate is turned way down
     if (titleColor == 1) {
         titleColor++;
         title.style.color = "red";
@@ -436,11 +436,11 @@ function changeTitleColor() {
     }
 }
 
-let interval = setInterval(render, 10);
+let interval = setInterval(render, 10); //these three intervals are always on and update the canvas by calling the appropriate functions
 let enemyMoveInterval = setInterval(moveEnemies, enemyMoveTiming);
 let titleInterval = setInterval(changeTitleColor, 800);
 
-function newRound() {
+function newRound() { //when the screen is clear, re-populates the enemies, resets player x,y, and resets all firable entities.
     level++;
     lives++;
     incrementability = 1;
